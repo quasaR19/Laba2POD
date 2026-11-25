@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ЛР №4 — Jenkins CI/CD: данные для отчёта и скриншотов</title>
+<style>
+  :root { color-scheme: light; --ink:#16202b; --muted:#5b6b7b; --line:#dce3ea; --bg:#f5f7fa; --card:#fff; --accent:#c7352b; --good:#137a4c; --warn:#a35b00; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.55 "Segoe UI",Arial,sans-serif; }
+  .wrap { max-width:1080px; margin:0 auto; padding:28px 22px 60px; }
+  header { background:linear-gradient(135deg,#5b1713,#c7352b); color:#fff; border-radius:14px; padding:24px 28px; }
+  header h1 { margin:0 0 6px; font-size:25px; }
+  header p { margin:4px 0; opacity:.92; }
+  .badges { margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; }
+  .badge { background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.28); border-radius:999px; padding:4px 11px; font-size:12px; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; margin-top:18px; }
+  h2 { font-size:18px; margin:0 0 12px; color:var(--accent); }
+  h3 { font-size:15px; margin:18px 0 8px; }
+  p { margin:8px 0; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; }
+  .kpi { border:1px solid var(--line); border-radius:10px; padding:14px 16px; background:#fbfcfe; }
+  .kpi b { display:block; font-size:26px; line-height:1.2; }
+  .kpi span { color:var(--muted); font-size:12px; }
+  .good { color:var(--good); } .warn { color:var(--warn); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; }
+  code, pre { font-family:Consolas,"Courier New",monospace; }
+  code { background:#eef2f6; padding:1px 5px; border-radius:4px; font-size:12.5px; }
+  pre { background:#12212f; color:#dce8f2; border-radius:8px; padding:13px 15px; overflow:auto; font-size:12.5px; line-height:1.45; }
+  pre code { background:none; color:inherit; padding:0; }
+  ol,ul { padding-left:22px; margin:8px 0; }
+  li { margin:6px 0; }
+  .note { border-left:4px solid var(--warn); background:#fff8ec; padding:10px 13px; border-radius:6px; }
+  .ok { border-left:4px solid var(--good); background:#effaf4; padding:10px 13px; border-radius:6px; }
+  .flow { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:14px 0; }
+  .box { border:2px solid var(--accent); border-radius:8px; padding:10px 13px; background:#fff5f4; font-weight:600; }
+  .arrow { color:var(--accent); font-size:20px; }
+  .shot { border:1px solid var(--line); border-radius:10px; padding:12px; margin:12px 0; background:#fbfcfe; }
+  .shot img { width:100%; max-height:520px; object-fit:contain; border:1px solid var(--line); border-radius:6px; background:#fff; }
+  .shot figcaption { font-size:12.5px; color:var(--muted); margin-top:6px; }
+  details { border:1px solid var(--line); border-radius:8px; padding:9px 12px; margin:7px 0; background:#fbfcfe; }
+  summary { cursor:pointer; font-weight:600; }
+  .path { word-break:break-all; }
+  footer { color:var(--muted); text-align:center; margin-top:22px; font-size:12px; }
+  @media print { body{background:#fff} section,header,.shot{break-inside:avoid} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Лабораторная работа №4 — базовый CI/CD конвейер в Jenkins (Groovy DSL)</h1>
+  <p>Проект: геокодирование, вариант 14 · C# / .NET Framework 4.7.2 · репозиторий <code style="background:rgba(255,255,255,.15);color:#fff">Laba2POD</code></p>
+  <p>Всё необходимое: Jenkinsfile, этапы, скриншоты, артефакты, анализ и ответы на вопросы — в одном обзоре.</p>
+  <div class="badges">
+    <span class="badge">Jenkins 2.580.3</span>
+    <span class="badge">Declarative Pipeline</span>
+    <span class="badge">Git + GitHub Integration</span>
+    <span class="badge">Docker Pipeline</span>
+    <span class="badge">5 этапов CI</span>
+  </div>
+</header>
+
+<section>
+  <h2>1. Ключевые результаты (можно сразу в отчёт)</h2>
+  <div class="grid">
+    <div class="kpi"><b class="good">SUCCESS</b><span>результат сборки #2 в Jenkins</span></div>
+    <div class="kpi"><b>5</b><span>этапов: Checkout → Setup → Lint → Test → Archive</span></div>
+    <div class="kpi"><b>64</b><span>установленных плагинов (включая зависимости)</span></div>
+    <div class="kpi"><b class="good">OK</b><span>артефакты: build.txt, exe, логи, отчёт сборки</span></div>
+  </div>
+  <p class="ok"><b>Проверено локально 25.11.2026:</b> Jenkins запущен на <code>http://127.0.0.1:8080</code>, задача <code>Lab3-Git-Pipeline</code> создана из SCM (<code>Pipeline script from SCM</code>), конвейер выполнил сборку <code>#2</code>. Лог сборки и скриншоты — ниже.</p>
+  <p><b>Commit в GitHub:</b> <code>243a39a</code> → <code>origin/main</code> (<code>https://github.com/quasaR19/Laba2POD.git</code>), добавлен корневой <code>Jenkinsfile</code> и обновлён <code>.gitignore</code>.</p>
+</section>
+
+<section>
+  <h2>2. Jenkins и Groovy DSL — краткая теория для отчёта</h2>
+  <p><b>CI</b> (Continuous Integration) — частая интеграция изменений в общую ветку с автоматической сборкой и тестами. <b>CD</b> (Continuous Delivery) — каждая успешная сборка готова к развёртыванию; <b>Continuous Deployment</b> — развёртывается автоматически.</p>
+  <p><b>Jenkins</b> — open-source сервер автоматизации на Java: сборка, тесты, статический анализ, деплой, интеграция с Git/Docker. Расширяется плагинами; pipeline описывается на Groovy в двух вариантах: <b>Declarative</b> (проще, читаемый) и <b>Scripted</b> (гибче). В работе используется Declarative Pipeline.</p>
+  <table>
+    <thead><tr><th>Конструкция Groovy DSL</th><th>Назначение</th><th>Где использовано</th></tr></thead>
+    <tbody>
+      <tr><td><code>pipeline { }</code></td><td>Корневой блок Declarative Pipeline</td><td>весь файл</td></tr>
+      <tr><td><code>agent any</code></td><td>Выполнение на любом доступном агенте</td><td>корень</td></tr>
+      <tr><td><code>environment { }</code></td><td>Переменные окружения</td><td><code>PROJECT_NAME</code>, <code>WORK_DIR</code>, <code>SOLUTION</code>, <code>MSBUILD</code></td></tr>
+      <tr><td><code>stages { stage('...') { } }</code></td><td>Этапы конвейера</td><td>Checkout, Setup, Lint, Test, Archive</td></tr>
+      <tr><td><code>steps { }</code>, <code>bat '...'</code>, <code>echo</code></td><td>Шаги и команды Windows</td><td>все этапы</td></tr>
+      <tr><td><code>checkout scm</code></td><td>Получение исходников из Git</td><td>Checkout</td></tr>
+      <tr><td><code>archiveArtifacts</code></td><td>Публикация артефактов сборки</td><td>Lint, Test, Archive</td></tr>
+      <tr><td><code>post { always / success / failure }</code></td><td>Действия по итогам сборки</td><td>Lint, Test, корень pipeline</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>3. Структура pipeline (схема)</h2>
+  <div class="flow">
+    <span class="box">Checkout<br><small>checkout scm</small></span><span class="arrow">→</span>
+    <span class="box">Setup<br><small>nuget restore</small></span><span class="arrow">→</span>
+    <span class="box">Lint &amp; Static Analysis<br><small>MSBuild + анализаторы</small></span><span class="arrow">→</span>
+    <span class="box">Test<br><small>smoke + Serilog log</small></span><span class="arrow">→</span>
+    <span class="box">Archive<br><small>build.txt + exe + логи</small></span>
+  </div>
+  <p>После всех этапов выполняется блок <code>post</code>: сообщение о номере сборки и статус <code>success</code>/<code>failure</code>. На этапах Lint и Test блок <code>post { always { archiveArtifacts ... } }</code> сохраняет отчёты даже при падении.</p>
+  <table>
+    <thead><tr><th>Stage</th><th>Назначение</th><th>Результат</th></tr></thead>
+    <tbody>
+      <tr><td>Checkout</td><td>Клонирование <code>main</code>, вывод короткого SHA</td><td>исходники в workspace</td></tr>
+      <tr><td>Setup</td><td>Скачивание <code>nuget.exe</code> и восстановление пакетов по <code>packages.config</code></td><td>папка <code>packages/</code></td></tr>
+      <tr><td>Lint &amp; Static Analysis</td><td>Сборка с StyleCop, SonarAnalyzer, SecurityCodeScan; подсчёт предупреждений</td><td><code>analysis_ci.txt</code></td></tr>
+      <tr><td>Test</td><td>Smoke-запуск <code>GeocodingSystem.exe</code> и проверка лога Serilog</td><td><code>run_output.txt</code>, <code>logs/app_*.log</code></td></tr>
+      <tr><td>Archive</td><td>Формирование <code>artifacts/build.txt</code> и публикация артефактов</td><td>артефакты сборки в Jenkins</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>4. Листинг Jenkinsfile (корень репозитория)</h2>
+  <p>Файл: <span class="path">E:\Laba1POD\Jenkinsfile</span> · Script Path в задаче Jenkins: <code>Jenkinsfile</code>.</p>
+  <pre><code>// ЛР №4 — базовый CI/CD конвейер в Jenkins (Declarative Pipeline, Groovy DSL)
+// Проект: GeocodingSystem (ЛР №1), репозиторий: Laba2POD (ЛР №2), вариант 14.
+// Script Path в задаче Jenkins: Jenkinsfile (корень репозитория).
+
+pipeline {
+    agent any
+
+    environment {
+        PROJECT_NAME = &#x27;Laba2POD&#x27;
+        WORK_DIR = &#x27;GeocodingSystem/GeocodingSystem&#x27;
+        SOLUTION = &#x27;GeocodingSystem/GeocodingSystem/GeocodingSystem.sln&#x27;
+        MSBUILD = &#x27;E:\\Visual Studio Community\\MSBuild\\Current\\Bin\\MSBuild.exe&#x27;
+    }
+
+    stages {
+        stage(&#x27;Checkout&#x27;) {
+            steps {
+                echo &quot;Клонирование проекта ${env.PROJECT_NAME} из ${env.GIT_URL}&quot;
+                checkout scm
+                bat &#x27;git rev-parse --short HEAD&#x27;
+                echo &quot;Рабочая папка: ${env.WORKSPACE}&quot;
+            }
+        }
+
+        stage(&#x27;Setup&#x27;) {
+            steps {
+                echo &#x27;Установка зависимостей (packages.config) ...&#x27;
+                bat &#x27;if not exist &quot;%WORK_DIR%\\nuget.exe&quot; curl.exe -L -o &quot;%WORK_DIR%\\nuget.exe&quot; https://dist.nuget.org/win-x86-commandline/latest/nuget.exe&#x27;
+                bat &#x27;cd /d &quot;%WORK_DIR%&quot; &amp;&amp; nuget.exe restore GeocodingSystem.sln -PackagesDirectory packages&#x27;
+            }
+        }
+
+        stage(&#x27;Lint &amp; Static Analysis&#x27;) {
+            steps {
+                echo &#x27;Сборка со статическими анализаторами (StyleCop / Sonar / SecurityCodeScan) ...&#x27;
+                bat &#x27;&quot;%MSBUILD%&quot; &quot;%SOLUTION%&quot; /t:Rebuild /p:Configuration=Debug /v:minimal &gt; analysis_ci.txt 2&gt;&amp;1&#x27;
+                bat &#x27;powershell -NoProfile -Command &quot;$w = (Select-String -Path analysis_ci.txt -Pattern \&#x27;: warning \&#x27;).Count; Write-Host (\&#x27;MSBuild warnings: \&#x27; + $w)&quot;&#x27;
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: &#x27;analysis_ci.txt&#x27;, allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage(&#x27;Test&#x27;) {
+            steps {
+                echo &#x27;Smoke-тест: запуск GeocodingSystem.exe и проверка логов Serilog ...&#x27;
+                bat &#x27;cd /d &quot;%WORK_DIR%\\bin\\Debug&quot; &amp;&amp; (GeocodingSystem.exe &lt; NUL &gt; run_output.txt 2&gt;&amp;1)&#x27;
+                bat &#x27;powershell -NoProfile -Command &quot;if (-not (Get-ChildItem \&#x27;%WORK_DIR%/bin/Debug/logs/app_*.log\&#x27; -ErrorAction SilentlyContinue)) { throw \&#x27;Serilog log file not found\&#x27; }; Get-ChildItem \&#x27;%WORK_DIR%/bin/Debug/logs/app_*.log\&#x27; | Select-Object -ExpandProperty Name&quot;&#x27;
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: &#x27;GeocodingSystem/GeocodingSystem/bin/Debug/run_output.txt, GeocodingSystem/GeocodingSystem/bin/Debug/logs/**&#x27;, allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage(&#x27;Archive&#x27;) {
+            steps {
+                echo &#x27;Сохранение артефакта сборки ...&#x27;
+                bat &#x27;if not exist artifacts mkdir artifacts &amp;&amp; echo Build %BUILD_NUMBER% commit %GIT_COMMIT% &gt; artifacts\\build.txt&#x27;
+                archiveArtifacts artifacts: &#x27;artifacts/**, GeocodingSystem/GeocodingSystem/bin/Debug/GeocodingSystem.exe&#x27;, allowEmptyArchive: true
+            }
+        }
+    }
+
+    post {
+        always {
+            echo &quot;Pipeline завершён. Номер сборки: ${env.BUILD_NUMBER}&quot;
+        }
+        success {
+            echo &#x27;Все этапы прошли успешно!&#x27;
+        }
+        failure {
+            echo &#x27;Один из этапов завершился с ошибкой&#x27;
+        }
+    }
+}
+</code></pre>
+</section>
+
+<section>
+  <h2>5. Настройка задачи Jenkins</h2>
+  <ol>
+    <li>Jenkins → <b>New Item</b> → имя <code>Lab3-Git-Pipeline</code> → тип <b>Pipeline</b>.</li>
+    <li>Pipeline → <b>Pipeline script from SCM</b>; SCM: <b>Git</b>.</li>
+    <li>Repository URL: <code>https://github.com/quasaR19/Laba2POD.git</code>; Branch: <code>*/main</code>; Script Path: <code>Jenkinsfile</code>.</li>
+    <li>Build Triggers → <b>GitHub hook trigger for GITScm polling</b>.</li>
+    <li>Save → <b>Build Now</b> → Console Output / Stage View / Artifacts.</li>
+  </ol>
+  <p><b>Плагины:</b> Git plugin, Pipeline (workflow-aggregator), GitHub Integration, Docker Pipeline — установлены вместе с зависимостями (64 плагинов).</p>
+  <pre><code>docker-workflow            653.v2f2c08eff0ec                             
+git                        5.11.0                                        
+github                     1.47.0                                        
+pipeline-model-definition  2.2293.v6e7193cec599                          
+workflow-aggregator        608.v67378e9d3db_1                            </code></pre>
+</section>
+
+<section>
+  <h2>6. Результаты запуска и анализ</h2>
+  <p class="ok"><b>Сборка #2: SUCCESS.</b> Ниже — фрагмент Console Output (полный лог доступен в Jenkins → Build → Console Output).</p>
+  <pre><code>Obtained Jenkinsfile from git https://github.com/quasaR19/Laba2POD.git
+Checking out Revision 0fe845148427a1372be70bf2bfe6430401f86043 (refs/remotes/origin/main)
+&gt; git.exe checkout -f 0fe845148427a1372be70bf2bfe6430401f86043 # timeout=10
+0fe8451
+MSBuild warnings: 0
+app_20261125.log
+Все этапы прошли успешно!
+Finished: SUCCESS</code></pre>
+  <h3>Артефакты сборки</h3>
+  <ul>
+    <li><code>artifacts/build.txt</code> — номер сборки и commit;</li>
+    <li><code>GeocodingSystem.exe</code> — собранное приложение;</li>
+    <li><code>analysis_ci.txt</code> — лог сборки с предупреждениями;</li>
+    <li><code>run_output.txt</code> и <code>logs/app_*.log</code> — вывод smoke-теста и логи Serilog.</li>
+  </ul>
+  <h3>Что проанализировать в отчёте</h3>
+  <ul>
+    <li><b>Время этапов:</b> дольше всего — Setup (загрузка NuGet) и Lint (полная пересборка с анализаторами); Checkout и Archive занимают секунды.</li>
+    <li><b>Риски падений:</b> Setup зависит от доступности <code>dist.nuget.org</code>, Lint — от наличия MSBuild по указанному пути, Test — от корректности <code>App.config</code> и логгера.</li>
+    <li><b>Улучшения:</b> закешировать <code>packages/</code> и <code>nuget.exe</code>, вынести путь к MSBuild в отдельную переменную агента, добавить жёсткий quality gate (0 предупреждений), хранить артефакты с версией коммита.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>7. Скриншоты — готовые файлы для отчёта</h2>
+  <figure class="shot"><img src="lab4_screenshots/01_jenkins_home.png" alt="1. Главная страница Jenkins и список задач"><figcaption>1. Главная страница Jenkins и список задач</figcaption></figure>
+  <figure class="shot"><img src="lab4_screenshots/02_stage_view.png" alt="2. Задача Lab3-Git-Pipeline: история сборок и Stage View"><figcaption>2. Задача Lab3-Git-Pipeline: история сборок и Stage View</figcaption></figure>
+  <figure class="shot"><img src="lab4_screenshots/03_console_output.png" alt="3. Console Output сборки #2 — Finished: SUCCESS"><figcaption>3. Console Output сборки #2 — Finished: SUCCESS</figcaption></figure>
+  <figure class="shot"><img src="lab4_screenshots/04_artifacts.png" alt="4. Артефакты сборки #2: build.txt, exe, analysis_ci.txt, логи"><figcaption>4. Артефакты сборки #2: build.txt, exe, analysis_ci.txt, логи</figcaption></figure>
+  <figure class="shot"><img src="lab4_screenshots/06_plugins.png" alt="5. Установленные плагины Git, Pipeline, GitHub, Docker Pipeline"><figcaption>5. Установленные плагины Git, Pipeline, GitHub, Docker Pipeline</figcaption></figure>
+  <p class="note"><b>Webhook:</b> В Jenkins включён триггер <code>GitHub hook trigger for GITScm polling</code>. GitHub-_webhook_ в этой среде не создан: Jenkins доступен только на <code>127.0.0.1:8080</code>, а для GitHub нужен публичный адрес (например, <code>ngrok http 8080</code>). Для включения автоматического запуска: GitHub → Settings → Webhooks → Add webhook → Payload URL <code>http://&lt;публичный-адрес&gt;/github-webhook/</code>, Content type <code>application/json</code>, Events: <b>Just the push event</b>, Active. Скриншот этой формы нужно снять после получения публичного адреса — он не подменяется выдуманным изображением.</p>
+</section>
+
+<section>
+  <h2>8. Структура отчёта (по требованиям ЛР №4)</h2>
+  <ol>
+    <li>Титульный лист: «Лабораторная работа №4. Построение базового CI/CD конвейера в Jenkins с использованием Groovy DSL», вариант 14.</li>
+    <li>Цель работы — §1 задания.</li>
+    <li>Jenkins и Groovy DSL — раздел 2 этого обзора.</li>
+    <li>Структура pipeline (схема) — раздел 3.</li>
+    <li>Листинг Jenkinsfile — раздел 4.</li>
+    <li>Скриншоты: главная Jenkins, этапы, Console Output, Artifacts, webhook GitHub — раздел 7.</li>
+    <li>Анализ результатов — раздел 6.</li>
+    <li>Выводы — раздел 9.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>9. Выводы и контрольные вопросы</h2>
+  <p>Построен Declarative Pipeline из пяти этапов, интегрированный с GitHub-репозиторием из ЛР №2 и проектом из ЛР №1. Jenkins автоматически получает код, восстанавливает зависимости, собирает проект со статическими анализаторами, выполняет smoke-тест и публикует артефакты. Конвейер описан в <code>Jenkinsfile</code> в репозитории, поэтому конфигурация сборки версионируется вместе с кодом.</p>
+  <details><summary>Что такое CI/CD?</summary><p>CI — частая интеграция изменений с автоматической сборкой и тестами. Continuous Delivery — любая успешная версия готова к деплою. Continuous Deployment — деплой каждой успешной версии выполняется автоматически.</p></details>
+  <details><summary>Чем Declarative Pipeline отличается от Scripted?</summary><p>Declarative имеет фиксированную структуру <code>pipeline { agent, stages, post }</code> и проще для чтения; Scripted — это произвольный Groovy-код внутри <code>node { }</code>, гибче, но сложнее поддерживать.</p></details>
+  <details><summary>Что такое Jenkinsfile?</summary><p>Текстовый файл в репозитории с описанием pipeline. Jenkins читает его из SCM (Script Path), благодаря чему конфигурация CI версионируется и проходит code review.</p></details>
+  <details><summary>Что такое stage и step?</summary><p>Stage — логический этап (Checkout, Build, Test); step — отдельная команда внутри этапа (<code>echo</code>, <code>bat</code>, <code>checkout scm</code>, <code>archiveArtifacts</code>).</p></details>
+  <details><summary>Зачем нужны артефакты и webhook?</summary><p>Артефакты сохраняют результат сборки (exe, логи, отчёты) для проверки и доставки. Webhook уведомляет Jenkins о push в GitHub, обеспечивая автоматический запуск CI без ручного Build Now.</p></details>
+  <details><summary>Как улучшить pipeline?</summary><p>Кэширование зависимостей, параллельные этапы, жёсткий quality gate, уведомления и версионирование артефактов по коммиту.</p></details>
+</section>
+
+<footer>Сформировано 25.11.2026 · Jenkins 2.580.3 · репозиторий Laba2POD · все данные взяты из реального запуска конвейера</footer>
+</div>
+</body>
+</html>
