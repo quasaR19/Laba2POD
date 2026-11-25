@@ -34,7 +34,7 @@ pipeline {
             steps {
                 echo 'Сборка со статическими анализаторами (StyleCop / Sonar / SecurityCodeScan) ...'
                 bat '"%MSBUILD%" "%SOLUTION%" /t:Rebuild /p:Configuration=Debug /v:minimal > analysis_ci.txt 2>&1'
-                bat 'powershell -NoProfile -Command "$w = (Select-String -Path analysis_ci.txt -Pattern \': warning \').Count; Write-Host (\"Предупреждений сборки: \" + $w)"'
+                bat 'powershell -NoProfile -Command "$w = (Select-String -Path analysis_ci.txt -Pattern \': warning \').Count; Write-Host (\'MSBuild warnings: \' + $w)"'
             }
             post {
                 always {
@@ -47,7 +47,7 @@ pipeline {
             steps {
                 echo 'Smoke-тест: запуск GeocodingSystem.exe и проверка логов Serilog ...'
                 bat 'cd /d "%WORK_DIR%\\bin\\Debug" && (GeocodingSystem.exe < NUL > run_output.txt 2>&1)'
-                bat 'powershell -NoProfile -Command "if (-not (Get-ChildItem \'%WORK_DIR%/bin/Debug/logs/app_*.log\' -ErrorAction SilentlyContinue)) { throw \'Файл лога Serilog не создан\' }; Get-ChildItem \'%WORK_DIR%/bin/Debug/logs/app_*.log\' | Select-Object -ExpandProperty Name"'
+                bat 'powershell -NoProfile -Command "if (-not (Get-ChildItem \'%WORK_DIR%/bin/Debug/logs/app_*.log\' -ErrorAction SilentlyContinue)) { throw \'Serilog log file not found\' }; Get-ChildItem \'%WORK_DIR%/bin/Debug/logs/app_*.log\' | Select-Object -ExpandProperty Name"'
             }
             post {
                 always {
