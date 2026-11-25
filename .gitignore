@@ -9,3 +9,6 @@ packages/
 logs/
 *.log
 run_output.txt
+nuget.exe
+artifacts/
+analysis_ci.txt
