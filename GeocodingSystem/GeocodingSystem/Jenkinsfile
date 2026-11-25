@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Restore') {
+            steps {
+                bat 'nuget restore GeocodingSystem.sln'
+            }
+        }
+
+        stage('Lint & Static Analysis') {
+            steps {
+                bat 'msbuild GeocodingSystem.sln /t:Rebuild /p:Configuration=Debug /v:minimal > analysis_after.txt 2>&1'
+                bat 'powershell -Command "(Select-String -Path analysis_after.txt -Pattern \': warning \').Count"'
+            }
+
+            post {
+                always {
+                    archiveArtifacts artifacts: 'analysis_after.txt, bin/Debug/GeocodingSystem.xml', allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('Smoke test (Serilog)') {
+            steps {
+                bat 'cd bin\\Debug && GeocodingSystem.exe < NUL > run_output.txt 2>&1'
+            }
+
+            post {
+                always {
+                    archiveArtifacts artifacts: 'bin/Debug/run_output.txt, bin/Debug/logs/**', allowEmptyArchive: true
+                }
+            }
+        }
+    }
+}

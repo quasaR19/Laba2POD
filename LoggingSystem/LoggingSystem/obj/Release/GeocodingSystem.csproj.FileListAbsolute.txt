@@ -1,7 +1,0 @@
-E:\Laba1POD\LoggingSystem\LoggingSystem\bin\Release\GeocodingSystem.exe.config
-E:\Laba1POD\LoggingSystem\LoggingSystem\bin\Release\GeocodingSystem.exe
-E:\Laba1POD\LoggingSystem\LoggingSystem\bin\Release\GeocodingSystem.pdb
-E:\Laba1POD\LoggingSystem\LoggingSystem\obj\Release\GeocodingSystem.csproj.AssemblyReference.cache
-E:\Laba1POD\LoggingSystem\LoggingSystem\obj\Release\GeocodingSystem.csproj.CoreCompileInputs.cache
-E:\Laba1POD\LoggingSystem\LoggingSystem\obj\Release\GeocodingSystem.exe
-E:\Laba1POD\LoggingSystem\LoggingSystem\obj\Release\GeocodingSystem.pdb

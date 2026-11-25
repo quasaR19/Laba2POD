@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.11.12328.437 stable
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeocodingSystem", "GeocodingSystem.csproj", "{DEDA033D-B418-449F-A477-6E2FC40F76CC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{4D991D21-103C-47BF-9DCB-24BF203008EB}"
+	ProjectSection(SolutionItems) = preProject
+		stylecop.json = stylecop.json
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DEDA033D-B418-449F-A477-6E2FC40F76CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEDA033D-B418-449F-A477-6E2FC40F76CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEDA033D-B418-449F-A477-6E2FC40F76CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEDA033D-B418-449F-A477-6E2FC40F76CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {65C7398E-0835-4318-9A36-51EA523C264D}
+	EndGlobalSection
+EndGlobal

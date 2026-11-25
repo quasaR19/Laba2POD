@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ЛР №5 — обзор, данные для отчёта и скриншотов</title>
+<style>
+  :root { color-scheme: light; --ink:#16202b; --muted:#5b6b7b; --line:#dce3ea; --bg:#f5f7fa; --card:#fff; --accent:#1769aa; --good:#137a4c; --warn:#a35b00; --bad:#b3261e; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.55 "Segoe UI",Arial,sans-serif; }
+  .wrap { max-width:1080px; margin:0 auto; padding:28px 22px 60px; }
+  header { background:linear-gradient(135deg,#123b63,#1769aa); color:#fff; border-radius:14px; padding:24px 28px; }
+  header h1 { margin:0 0 6px; font-size:25px; }
+  header p { margin:4px 0; opacity:.92; }
+  .badges { margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; }
+  .badge { background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.28); border-radius:999px; padding:4px 11px; font-size:12px; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px 24px; margin-top:18px; }
+  h2 { font-size:18px; margin:0 0 12px; color:var(--accent); }
+  h3 { font-size:15px; margin:18px 0 8px; }
+  p { margin:8px 0; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; }
+  .kpi { border:1px solid var(--line); border-radius:10px; padding:14px 16px; background:#fbfcfe; }
+  .kpi b { display:block; font-size:26px; line-height:1.2; }
+  .kpi span { color:var(--muted); font-size:12px; }
+  .good { color:var(--good); } .warn { color:var(--warn); } .bad { color:var(--bad); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { border:1px solid var(--line); padding:7px 9px; text-align:left; vertical-align:top; }
+  th { background:#eef3f8; }
+  td.num, th.num { text-align:right; white-space:nowrap; }
+  code, pre { font-family:Consolas,"Courier New",monospace; }
+  code { background:#eef2f6; padding:1px 5px; border-radius:4px; font-size:12.5px; }
+  pre { background:#12212f; color:#dce8f2; border-radius:8px; padding:13px 15px; overflow:auto; font-size:12.5px; line-height:1.45; }
+  pre code { background:none; color:inherit; padding:0; }
+  ol,ul { padding-left:22px; margin:8px 0; }
+  li { margin:6px 0; }
+  .note { border-left:4px solid var(--warn); background:#fff8ec; padding:10px 13px; border-radius:6px; }
+  .ok { border-left:4px solid var(--good); background:#effaf4; padding:10px 13px; border-radius:6px; }
+  details { border:1px solid var(--line); border-radius:8px; padding:9px 12px; margin:7px 0; background:#fbfcfe; }
+  summary { cursor:pointer; font-weight:600; }
+  a { color:var(--accent); }
+  .path { word-break:break-all; }
+  footer { color:var(--muted); text-align:center; margin-top:22px; font-size:12px; }
+  @media print { body{background:#fff} section,header{break-inside:avoid;box-shadow:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Лабораторная работа №5 — статический анализ, исключения и логирование</h1>
+  <p>Проект: геокодирование, вариант 14 · C# / .NET Framework 4.7.2 · репозиторий <code style="background:rgba(255,255,255,.15);color:#fff">Laba2POD</code></p>
+  <p>Всё необходимое: результаты «до/после», исправления, данные для отчёта, чек-лист скриншотов, ответы на контрольные вопросы.</p>
+  <div class="badges">
+    <span class="badge">StyleCop.Analyzers 1.3.180</span>
+    <span class="badge">SonarAnalyzer.CSharp 10.37</span>
+    <span class="badge">SecurityCodeScan 5.6.7</span>
+    <span class="badge">Serilog 4.4 + Console + File</span>
+    <span class="badge">Jenkinsfile (Lint &amp; Static Analysis)</span>
+  </div>
+</header>
+
+<section>
+  <h2>1. Ключевые результаты (можно сразу в отчёт)</h2>
+  <div class="grid">
+    <div class="kpi"><b class="bad">87</b><span>предупреждений до исправлений</span></div>
+    <div class="kpi"><b class="good">0</b><span>предупреждений после исправлений</span></div>
+    <div class="kpi"><b class="good">0</b><span>ошибок сборки после исправлений</span></div>
+    <div class="kpi"><b class="good">OK</b><span>smoke-запуск .exe и запись логов</span></div>
+  </div>
+  <p class="ok"><b>Проверено локально 25.11.2026:</b> <code>MSBuild 18.11.1</code> → <code>Сборка успешно завершена. Предупреждений: 0, Ошибок: 0</code>; <code>GeocodingSystem.exe</code> отработал, создан <code>bin\Debug\logs\app_20261125.log</code> (24 КБ).</p>
+  <p>Источники цифр: <a href="analysis_before.txt">analysis_before.txt</a> (87), <a href="analysis_after.txt">analysis_after.txt</a> (0), <a href="analysis_before_full.txt">analysis_before_full.txt</a> (174 = 87 × 2, две сборки подряд).</p>
+</section>
+
+<section>
+  <h2>2. Сравнительная таблица «до / после»</h2>
+  <table>
+    <thead><tr><th>Код</th><th class="num">Было</th><th class="num">Стало</th><th>Что исправлено</th></tr></thead>
+    <tbody>
+      <tr><td>SA1500</td><td class="num">20</td><td class="num">0</td><td>Фигурные скобки и отступы в инициализаторах коллекций</td></tr>
+      <tr><td>SA1101</td><td class="num">20</td><td class="num">0</td><td>Префикс <code>this.</code> для обращения к членам класса</td></tr>
+      <tr><td>SA1137</td><td class="num">10</td><td class="num">0</td><td>Единый порядок элементов в каждом файле</td></tr>
+      <tr><td>SA1309</td><td class="num">9</td><td class="num">0</td><td><code>_apiKey</code> → <code>apiKey</code>, <code>_database</code> → <code>database</code></td></tr>
+      <tr><td>SA1402</td><td class="num">6</td><td class="num">0</td><td>Типы из одного <code>Program.cs</code> разнесены по отдельным файлам</td></tr>
+      <tr><td>SA1503</td><td class="num">5</td><td class="num">0</td><td><code>if</code> без скобок → <code>if { ... }</code></td></tr>
+      <tr><td>SA1413</td><td class="num">4</td><td class="num">0</td><td>Завершающие запятые в инициализаторах</td></tr>
+      <tr><td>SA1400</td><td class="num">2</td><td class="num">0</td><td><code>Program</code> объявлен <code>static</code></td></tr>
+      <tr><td>SA1633</td><td class="num">2</td><td class="num">0</td><td>Добавлены copyright-заголовки файлов</td></tr>
+      <tr><td>SA1201</td><td class="num">2</td><td class="num">0</td><td>Порядок объявлений: поля → конструкторы → методы</td></tr>
+      <tr><td>SA1200</td><td class="num">2</td><td class="num">0</td><td>Directives <code>using</code> вынесены вне namespace</td></tr>
+      <tr><td>SA0001</td><td class="num">1</td><td class="num">0</td><td>Включён <code>GenerateDocumentationFile</code>, подключён <code>stylecop.json</code></td></tr>
+      <tr><td>S1075</td><td class="num">1</td><td class="num">0</td><td>Hardcoded URL перенесён в <code>App.config</code></td></tr>
+      <tr><td>S1118</td><td class="num">1</td><td class="num">0</td><td>Утилитный класс <code>Program</code> сделан статическим</td></tr>
+      <tr><td>SA1202</td><td class="num">1</td><td class="num">0</td><td>Порядок членов по доступности (public → private)</td></tr>
+      <tr><td>SA1649</td><td class="num">1</td><td class="num">0</td><td>Имя файла совпадает с именем первого типа</td></tr>
+      <tr><th>ИТОГО</th><th class="num">87</th><th class="num">0</th><th>Снижение на 100 %</th></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>3. Что именно исправлено (описание для отчёта)</h2>
+  <h3>Стиль и структура</h3>
+  <ul>
+    <li>Один огромный <code>Program.cs</code> разбит на 10 файлов: <code>IGeocoder</code>, <code>GeoResult</code>, <code>GeocodingException</code>, <code>GeocodingService</code>, 4 геокодера, <code>LoggerConfig</code>, <code>Program</code>.</li>
+    <li>Добавлены XML-доки (<code>&lt;summary&gt;</code>, <code>&lt;param&gt;</code>, <code>&lt;inheritdoc/&gt;</code>), <code>GenerateDocumentationFile=true</code>, <code>stylecop.json</code>, copyright-заголовки.</li>
+    <li>Именование приведено к camelCase для полей, единые отступы и фигурные скобки, завершающие запятые.</li>
+    <li>URL сервера Nominatim вынесен в <code>App.config</code> (ключ <code>OsmServerUrl</code>).</li>
+  </ul>
+  <h3>Обработка исключений</h3>
+  <ul>
+    <li>В <code>GeocodingService.Geocode</code> — конкретные <code>catch (TimeoutException)</code> и <code>catch (GeocodingException)</code> вместо общего <code>catch (Exception)</code>.</li>
+    <li>Ошибки логируются с полным стектрейсом: <code>log.Warning(ex, ...)</code>; при неудаче всех сервисов — <code>log.Error(...)</code> и return null.</li>
+    <li>В <code>Program.Main</code> — <code>catch (Exception ex)</code> только как последний рубеж: <code>log.Fatal(ex, ...)</code> + обёртка в <code>GeocodingException</code>; <code>finally</code> закрывает логгер.</li>
+    <li>В геокодерах — <code>ArgumentNullException</code> на <code>address == null</code>, <code>string.IsNullOrWhiteSpace</code> проверка в сервисе.</li>
+  </ul>
+  <pre><code>catch (TimeoutException ex)
+{
+    this.log.Warning(ex, "{Geocoder}: таймаут, пробуем следующий сервис", name);
+}
+catch (GeocodingException ex)
+{
+    this.log.Warning(ex, "{Geocoder}: ошибка геокодирования, пробуем следующий сервис", name);
+}</code></pre>
+  <h3>Логирование (Serilog)</h3>
+  <ul>
+    <li>Консоль: уровень <code>INFO</code>+, шаблон <code>[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}</code>.</li>
+    <li>Файл: уровень <code>DEBUG</code>+, <code>logs/app_.log</code>, ротация по дням, хранение 7 файлов.</li>
+    <li>Уровни в коде: INFO — вход в метод/успех, DEBUG — координаты и флаг наличия ключа, WARN — адрес не найден/таймаут, ERROR/FATAL — ошибки.</li>
+    <li><b>Безопасность:</b> в логи пишется только факт наличия ключа (<code>HasApiKey=True/False</code>), не сам ключ; в <code>App.config</code> — заглушки <code>*_API_KEY</code>.</li>
+  </ul>
+  <h3>Слабая связность (наследие ЛР №1)</h3>
+  <p><code>GeocodingService</code> зависит только от <code>IGeocoder</code>; <code>HereGeocoder</code> добавляется в <code>Program.cs</code> через новый список — основной модуль не менялся. Это хорошо видно на скриншоте запуска.</p>
+</section>
+
+<section>
+  <h2>4. Данные для скриншотов — чек-лист</h2>
+  <ol>
+    <li><b>«До»:</b> конец <code>analysis_before.txt</code> — строка <code>Предупреждений: 87</code> + 5–10 строк предупреждений <code>SA*/S*</code>. Файл: <span class="path">E:\Laba1POD\GeocodingSystem\GeocodingSystem\analysis_before.txt</span></li>
+    <li><b>«После»:</b> конец <code>analysis_after.txt</code> — <code>Сборка успешно завершена. Предупреждений: 0, Ошибок: 0</code>. Файл: <span class="path">...\analysis_after.txt</span></li>
+    <li><b>Консоль программы:</b> запустить <code>bin\Debug\GeocodingSystem.exe</code>, видны строки <code>[20:27:51 INF]</code>, <code>[DBG]</code>, <code>[WRN]</code> с <code>SourceContext</code> и блок «Расширение: HereGeocoder».</li>
+    <li><b>Файл лога:</b> Проводник → <code>bin\Debug\logs\app_20261125.log</code> (или актуальная дата), открыть в Блокноте — видны те же события с датой и уровнем.</li>
+    <li><b>Анализаторы:</b> <code>GeocodingSystem.csproj</code> — секции <code>&lt;Analyzer Include=...&gt;</code> (StyleCop, Sonar, SecurityCodeScan) и <code>GenerateDocumentationFile</code>; рядом <code>stylecop.json</code>.</li>
+    <li><b>Исключения:</b> <code>GeocodingService.cs</code> строки 56–63 — два конкретных catch + логирование с <code>ex</code>.</li>
+    <li><b>Структура проекта:</b> Solution Explorer — 10 .cs-файлов вместо одного Program.cs.</li>
+    <li><b>CI:</b> <code>Jenkinsfile</code> (этапы Restore → Lint &amp; Static Analysis → Smoke test) и, если Jenkins запущен, вкладка Jenkins с артефактами <code>analysis_after.txt</code>, <code>bin/Debug/run_output.txt</code>, <code>bin/Debug/logs/**</code>.</li>
+  </ol>
+  <p class="note"><b>Требует внимания:</b> скриншоты Jenkins и вебхука GitHub сделать локально не удалось — Jenkins в этой среде не запущен. В отчёт можно вставить листинг <code>Jenkinsfile</code> и пометить, что pipeline готов к запуску; либо запустить Jenkins и снять скриншоты по пункту 8.</p>
+</section>
+
+<section>
+  <h2>5. Структура отчёта (по требованиям ЛР №5)</h2>
+  <ol>
+    <li>Титульный лист — «Лабораторная работа №5. Статический анализ и улучшение качества кода», вариант 14, C#/.NET 4.7.2.</li>
+    <li>Цель работы — освоить статический анализ, обработку исключений, логирование и интеграцию в CI (текст из §1 задания).</li>
+    <li>Краткое описание проекта из ЛР №1 — геокодер с <code>IGeocoder</code>, DI через конструктор, расширение <code>HereGeocoder</code>.</li>
+    <li>Инструменты — StyleCop.Analyzers, SonarAnalyzer.CSharp, SecurityCodeScan, Serilog (+ MSBuild как раннер).</li>
+    <li>Результаты до улучшений — <code>analysis_before.txt</code>, 87 предупреждений, скриншот №1.</li>
+    <li>Описание исправлений — раздел 3 этого обзора (стиль, XML-доки, исключения, логирование).</li>
+    <li>Результаты после — <code>analysis_after.txt</code>, 0 предупреждений, скриншот №2.</li>
+    <li>Интеграция в CI — листинг <code>Jenkinsfile</code>, скриншот №8 при наличии Jenkins.</li>
+    <li>Сравнительная таблица — раздел 2 этого обзора.</li>
+    <li>Выводы — качество кода повысилось: 87 → 0 предупреждений, ошибки логируются с стектрейсом, логи пишутся в консоль и файл, анализ закреплён в CI.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>6. Воспроизведение результатов</h2>
+  <pre><code>cd E:\Laba1POD\GeocodingSystem\GeocodingSystem
+& "E:\Visual Studio Community\MSBuild\Current\Bin\MSBuild.exe" `
+    GeocodingSystem.sln /t:Rebuild /p:Configuration=Debug /v:minimal `
+    &gt; analysis_after.txt 2&gt;&amp;1
+(Select-String -Path analysis_after.txt -Pattern ': warning ').Count   # 0
+
+cd bin\Debug
+GeocodingSystem.exe</code></pre>
+  <p>Лог: <code>bin\Debug\logs\app_&lt;дата&gt;.log</code>. Для Jenkins см. <a href="Jenkinsfile">Jenkinsfile</a>:</p>
+  <pre><code>stage('Lint &amp; Static Analysis') {
+    steps {
+        bat 'msbuild GeocodingSystem.sln /t:Rebuild /p:Configuration=Debug /v:minimal &gt; analysis_after.txt 2&gt;&amp;1'
+        bat 'powershell -Command "(Select-String -Path analysis_after.txt -Pattern \': warning \').Count"'
+    }
+    post { always { archiveArtifacts artifacts: 'analysis_after.txt, bin/Debug/GeocodingSystem.xml', allowEmptyArchive: true } }
+}</code></pre>
+  <p class="note"><b>Важно:</b> <code>packages/</code> не лежат в git (исключены в <code>.gitignore</code>). Перед сборкой на чистой машине — <code>nuget restore GeocodingSystem.sln</code>, это уже есть в этапе Restore Jenkinsfile.</p>
+</section>
+
+<section>
+  <h2>7. Контрольные вопросы — краткие ответы</h2>
+  <details><summary>Что такое статический анализ кода?</summary><p>Проверка исходного кода без запуска программы: стиль, потенциальные баги, уязвимости, сложность, дублирование. Здесь — StyleCop, SonarAnalyzer, SecurityCodeScan во время сборки MSBuild.</p></details>
+  <details><summary>Какие инструменты использовались?</summary><p>StyleCop.Analyzers (стиль/доки), SonarAnalyzer.CSharp (качество и уязвимости, S1075/S1118), SecurityCodeScan (безопасность), Serilog (логирование), MSBuild как раннер, Jenkins как CI.</p></details>
+  <details><summary>Чем Pylint отличается от Flake8?</summary><p>Pylint — глубокая проверка: ошибки, стиль, рефакторинг, типы; Flake8 — в основном PEP 8 и синтаксис (комбинация pycodestyle/pyflakes/mccabe). В C#-варианте аналоги — SonarAnalyzer (глубина) и StyleCop (стиль).</p></details>
+  <details><summary>Что такое «глотание» исключений?</summary><p>Пустой <code>catch</code>, который скрывает ошибку: программа продолжает работу в некорректном состоянии и нет диагностики. Здесь вместо этого конкретные catch + логирование с стектрейсом.</p></details>
+  <details><summary>Уровни логирования?</summary><p>TRACE, DEBUG, INFO, WARN, ERROR, FATAL. Использованы DEBUG (промежуточные значения), INFO (вход/успех), WARN (адрес не найден, таймаут), ERROR/FATAL (сбой).</p></details>
+  <details><summary>Почему нельзя логировать пароли и токены?</summary><p>Логи читают многие люди и они попадают в архивы/мониторинг — утечка ключа даёт злоумышленнику доступ. Поэтому логируется только факт наличия ключа, а значения ключей в коде — заглушки.</p></details>
+  <details><summary>Как статический анализ встраивается в CI/CD?</summary><p>Отдельный этап в Jenkinsfile после Restore: сборка с анализаторами, подсчёт предупреждений, архивация отчёта как артефакта. При провале порога quality gate сборка помечается failed и разработчик получает сигнал до мерджа.</p></details>
+  <details><summary>Что такое порог качества (quality gate)?</summary><p>Заданное условие прохождения сборки, например «0 предупреждений» или «покрытие ≥ 80 %». Здесь целевой порог — 0 предупреждений; в Jenkinsfile сейчас выводится счётчик (для жёсткого гейта можно добавить проверку и <code>error</code> при &gt;0).</p></details>
+</section>
+
+<section>
+  <h2>8. Файлы проекта (что закоммичено)</h2>
+  <table>
+    <thead><tr><th>Файл</th><th>Роль</th></tr></thead>
+    <tbody>
+      <tr><td><code>analysis_before.txt</code> / <code>analysis_before_full.txt</code></td><td>Логи до исправлений (87 / 174)</td></tr>
+      <tr><td><code>analysis_after.txt</code></td><td>Лог после исправлений (0)</td></tr>
+      <tr><td><code>LAB5_report_notes.md</code></td><td>Заметки и список скриншотов</td></tr>
+      <tr><td><code>Jenkinsfile</code></td><td>CI: Restore → Lint &amp; Static Analysis → Smoke test</td></tr>
+      <tr><td><code>LoggerConfig.cs</code>, <code>GeocodingService.cs</code>, 4 геокодера</td><td>Логирование, исключения, реализация узлов сети</td></tr>
+      <tr><td><code>GeocodingSystem.csproj</code>, <code>stylecop.json</code>, <code>packages.config</code></td><td>Анализаторы, документация, пакеты</td></tr>
+      <tr><td><code>LAB5_overview.html</code></td><td>Этот обзор (можно приложить к отчёту)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>Сформировано 25.11.2026 · все числа взяты из логов сборки, а не из предположений</footer>
+</div>
+</body>
+</html>

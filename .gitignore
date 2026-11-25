@@ -1,2 +1,11 @@
 Лаба1-Отчёт.docx
 Лабораторная работа №1.docx
+
+# Сгенерированные файлы и зависимости NuGet
+.vs/
+bin/
+obj/
+packages/
+logs/
+*.log
+run_output.txt
